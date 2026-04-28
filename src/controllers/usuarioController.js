@@ -4,7 +4,7 @@ const criar = async (req, res) => {
     const { nome, email, tipo } = req.body;
 
     if (!nome || !email || !tipo) {
-        return res.status(400).json({ erro: 'nome, email e tipo são obrigatórios' });
+        return res.status(400).json({ erro: 'Todos os campos sao obrigatorios' });
     }
 
     try {
