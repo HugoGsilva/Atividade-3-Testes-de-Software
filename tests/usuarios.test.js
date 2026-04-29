@@ -45,4 +45,10 @@ describe('Usuarios', () => {
         const res = await request(app).get('/usuarios/9999');
         expect(res.status).toBe(404);
     });
+
+    test('POST /usuarios retorna 400 para email duplicado', async () => {
+        await request(app).post('/usuarios').send({ nome: 'Joao', email: 'igual@test.com', tipo: 'aluno' });
+        const res = await request(app).post('/usuarios').send({ nome: 'Maria', email: 'igual@test.com', tipo: 'professor' });
+        expect(res.status).toBe(400);
+    });
 });

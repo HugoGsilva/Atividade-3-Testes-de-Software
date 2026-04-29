@@ -14,13 +14,13 @@ Projeto backend desenvolvido com **Node.js**, **Express** e **Sequelize** para a
 
 ## Estrutura de Testes
 
-| Arquivo de teste | Quantidade |
-|------------------|------------|
-| `livros.test.js` | 4 passes |
-| `usuarios.test.js` | 4 passes |
-| `emprestimos.test.js` | 4 passes |
-| `multas.test.js` | 4 passes |
-| **Total** | **16 testes** |
+| Arquivo de teste | Quantidade | Cenários cobertos |
+|------------------|------------|-------------------|
+| `livros.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), campos retornados |
+| `usuarios.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), email duplicado |
+| `emprestimos.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), campos retornados |
+| `multas.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), valor como número |
+| **Total** | **20 testes** | |
 
 ---
 

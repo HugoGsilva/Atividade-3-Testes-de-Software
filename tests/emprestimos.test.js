@@ -48,4 +48,16 @@ describe('Emprestimos', () => {
         const res = await request(app).get('/emprestimos/9999');
         expect(res.status).toBe(404);
     });
+
+    test('POST /emprestimos retorna emprestimo com livro_id, usuario_id e status', async () => {
+        const res = await request(app).post('/emprestimos').send({
+            livro_id: 1,
+            usuario_id: 1,
+            data_emprestimo: '2026-04-01',
+            status: 'ativo',
+        });
+        expect(res.body.livro_id).toBe(1);
+        expect(res.body.usuario_id).toBe(1);
+        expect(res.body.status).toBe('ativo');
+    });
 });

@@ -49,4 +49,15 @@ describe('Multas', () => {
         const res = await request(app).get('/multas/9999');
         expect(res.status).toBe(404);
     });
+
+    test('POST /multas retorna o valor da multa como numero', async () => {
+        const res = await request(app).post('/multas').send({
+            emprestimo_id: 1,
+            valor: 15.75,
+            data_multa: '2026-04-10',
+            paga: false,
+        });
+        expect(typeof res.body.valor).toBe('number');
+        expect(res.body.valor).toBe(15.75);
+    });
 });

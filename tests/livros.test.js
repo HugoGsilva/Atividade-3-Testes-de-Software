@@ -33,4 +33,11 @@ describe('Livros', () => {
         const res = await request(app).get('/livros/9999');
         expect(res.status).toBe(404);
     });
+
+    test('POST /livros retorna o livro criado com id, titulo e autor', async () => {
+        const res = await request(app).post('/livros').send({ titulo: 'Refactoring', autor: 'Martin Fowler' });
+        expect(res.body).toHaveProperty('id');
+        expect(res.body.titulo).toBe('Refactoring');
+        expect(res.body.autor).toBe('Martin Fowler');
+    });
 });
