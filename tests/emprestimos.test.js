@@ -60,4 +60,41 @@ describe('Emprestimos', () => {
         expect(res.body.usuario_id).toBe(1);
         expect(res.body.status).toBe('ativo');
     });
+
+    test('GET /emprestimos lista todos os emprestimos cadastrados', async () => {
+        await request(app).post('/emprestimos').send({ livro_id: 1, usuario_id: 1, data_emprestimo: '2026-04-01', status: 'ativo' });
+
+        const res = await request(app).get('/emprestimos');
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body)).toBe(true);
+        expect(res.body.length).toBe(1);
+    });
+
+    test('PUT /emprestimos/:id atualiza status de um emprestimo', async () => {
+        const criado = await request(app).post('/emprestimos').send({
+            livro_id: 1, usuario_id: 1, data_emprestimo: '2026-04-01', status: 'ativo',
+        });
+        const res = await request(app).put(`/emprestimos/${criado.body.id}`).send({ status: 'devolvido' });
+        expect(res.status).toBe(200);
+        expect(res.body.status).toBe('devolvido');
+    });
+
+    test('PUT /emprestimos/:id retorna 404 para emprestimo inexistente', async () => {
+        const res = await request(app).put('/emprestimos/9999').send({ status: 'devolvido' });
+        expect(res.status).toBe(404);
+    });
+
+    test('DELETE /emprestimos/:id remove um emprestimo existente', async () => {
+        const criado = await request(app).post('/emprestimos').send({
+            livro_id: 1, usuario_id: 1, data_emprestimo: '2026-04-01', status: 'ativo',
+        });
+        const res = await request(app).delete(`/emprestimos/${criado.body.id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('mensagem');
+    });
+
+    test('DELETE /emprestimos/:id retorna 404 para emprestimo inexistente', async () => {
+        const res = await request(app).delete('/emprestimos/9999');
+        expect(res.status).toBe(404);
+    });
 });

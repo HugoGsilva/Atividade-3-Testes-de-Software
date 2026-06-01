@@ -60,4 +60,44 @@ describe('Multas', () => {
         expect(typeof res.body.valor).toBe('number');
         expect(res.body.valor).toBe(15.75);
     });
+
+    test('GET /multas lista todas as multas cadastradas', async () => {
+        await request(app).post('/multas').send({ emprestimo_id: 1, valor: 10.50, data_multa: '2026-04-10', paga: false });
+
+        const res = await request(app).get('/multas');
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body)).toBe(true);
+        expect(res.body.length).toBe(1);
+    });
+
+    test('PUT /multas/:id atualiza uma multa existente', async () => {
+        const criado = await request(app).post('/multas').send({ emprestimo_id: 1, valor: 10.50, data_multa: '2026-04-10', paga: false });
+        const res = await request(app).put(`/multas/${criado.body.id}`).send({ valor: 20.00 });
+        expect(res.status).toBe(200);
+        expect(res.body.valor).toBe(20.00);
+    });
+
+    test('PUT /multas/:id retorna 404 para multa inexistente', async () => {
+        const res = await request(app).put('/multas/9999').send({ valor: 5.00 });
+        expect(res.status).toBe(404);
+    });
+
+    test('PUT /multas/quitar/:id quita uma multa existente', async () => {
+        const criado = await request(app).post('/multas').send({ emprestimo_id: 1, valor: 10.50, data_multa: '2026-04-10', paga: false });
+        const res = await request(app).put(`/multas/quitar/${criado.body.id}`);
+        expect(res.status).toBe(200);
+        expect(res.body.paga).toBe(true);
+    });
+
+    test('DELETE /multas/:id remove uma multa existente', async () => {
+        const criado = await request(app).post('/multas').send({ emprestimo_id: 1, valor: 10.50, data_multa: '2026-04-10', paga: false });
+        const res = await request(app).delete(`/multas/${criado.body.id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('mensagem');
+    });
+
+    test('DELETE /multas/:id retorna 404 para multa inexistente', async () => {
+        const res = await request(app).delete('/multas/9999');
+        expect(res.status).toBe(404);
+    });
 });

@@ -23,6 +23,10 @@ const Emprestimo = sequelize.define('Emprestimo', {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
+  data_devolucao_prevista: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
   status: {
     type: DataTypes.ENUM('ativo', 'devolvido', 'atrasado'),
     allowNull: false,

@@ -1,4 +1,4 @@
-const { listarLivros, criarLivro, buscarPorId } = require('../services/livroService');
+const { listarLivros, criarLivro, buscarPorId, atualizarLivro, deletarLivro } = require('../services/livroService');
 
 const listar = async (req, res) => {
     const livros = await listarLivros();
@@ -24,4 +24,20 @@ const obterPorId = async (req, res) => {
     res.status(200).json(livro);
 }
 
-module.exports = { listar, criar, obterPorId };
+const atualizar = async (req, res) => {
+    const livro = await atualizarLivro(req.params.id, req.body);
+    if (!livro) {
+        return res.status(404).json({ erro: 'Livro nao encontrado' });
+    }
+    res.status(200).json(livro);
+}
+
+const deletar = async (req, res) => {
+    const livro = await deletarLivro(req.params.id);
+    if (!livro) {
+        return res.status(404).json({ erro: 'Livro nao encontrado' });
+    }
+    res.status(200).json({ mensagem: 'Livro removido' });
+}
+
+module.exports = { listar, criar, obterPorId, atualizar, deletar };

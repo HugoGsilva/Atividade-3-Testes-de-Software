@@ -87,7 +87,7 @@ export function MultasPage() {
       setEditando(null);
       carregar();
     } catch (err) {
-      setErro('Falha ao salvar multa.');
+      setErro(err.response?.data?.erro || err.message || 'Falha ao salvar multa.');
     } finally {
       setSalvando(false);
     }

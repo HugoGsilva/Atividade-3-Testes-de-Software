@@ -51,4 +51,38 @@ describe('Usuarios', () => {
         const res = await request(app).post('/usuarios').send({ nome: 'Maria', email: 'igual@test.com', tipo: 'professor' });
         expect(res.status).toBe(400);
     });
+
+    test('GET /usuarios lista todos os usuarios cadastrados', async () => {
+        await request(app).post('/usuarios').send({ nome: 'Joao', email: 'joao@test.com', tipo: 'aluno' });
+        await request(app).post('/usuarios').send({ nome: 'Maria', email: 'maria@test.com', tipo: 'professor' });
+
+        const res = await request(app).get('/usuarios');
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body)).toBe(true);
+        expect(res.body.length).toBe(2);
+    });
+
+    test('PUT /usuarios/:id atualiza um usuario existente', async () => {
+        const criado = await request(app).post('/usuarios').send({ nome: 'Joao', email: 'joao@test.com', tipo: 'aluno' });
+        const res = await request(app).put(`/usuarios/${criado.body.id}`).send({ nome: 'Joao Atualizado' });
+        expect(res.status).toBe(200);
+        expect(res.body.nome).toBe('Joao Atualizado');
+    });
+
+    test('PUT /usuarios/:id retorna 404 para usuario inexistente', async () => {
+        const res = await request(app).put('/usuarios/9999').send({ nome: 'Nenhum' });
+        expect(res.status).toBe(404);
+    });
+
+    test('DELETE /usuarios/:id remove um usuario existente', async () => {
+        const criado = await request(app).post('/usuarios').send({ nome: 'Temp', email: 'temp@test.com', tipo: 'aluno' });
+        const res = await request(app).delete(`/usuarios/${criado.body.id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('mensagem');
+    });
+
+    test('DELETE /usuarios/:id retorna 404 para usuario inexistente', async () => {
+        const res = await request(app).delete('/usuarios/9999');
+        expect(res.status).toBe(404);
+    });
 });

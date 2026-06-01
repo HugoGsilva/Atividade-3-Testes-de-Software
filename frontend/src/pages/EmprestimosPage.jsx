@@ -150,7 +150,7 @@ export function EmprestimosPage() {
     setModalAberto(true);
   };
 
-  const livrosDisponiveis = livros.filter(l => (l.disponivel ?? 0) > 0 || (editando && l.id === editando.livro_id));
+  const livrosDisponiveis = livros.filter(l => (l.disponivel ?? 1) > 0 || (editando && l.id === editando.livro_id));
 
   return (
     <div className="stack">

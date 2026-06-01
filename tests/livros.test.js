@@ -62,4 +62,29 @@ describe('Livros', () => {
         expect(res.body.titulo).toBe('Refactoring');
         expect(res.body.autor).toBe('Martin Fowler');
     });
+
+    test('PUT /livros/:id atualiza um livro existente', async () => {
+        const criado = await request(app).post('/livros').send({ titulo: 'Titulo Original', autor: 'Autor Original' });
+        const res = await request(app).put(`/livros/${criado.body.id}`).send({ titulo: 'Titulo Atualizado' });
+        expect(res.status).toBe(200);
+        expect(res.body.titulo).toBe('Titulo Atualizado');
+        expect(res.body.autor).toBe('Autor Original');
+    });
+
+    test('PUT /livros/:id retorna 404 para livro inexistente', async () => {
+        const res = await request(app).put('/livros/9999').send({ titulo: 'Nenhum' });
+        expect(res.status).toBe(404);
+    });
+
+    test('DELETE /livros/:id remove um livro existente', async () => {
+        const criado = await request(app).post('/livros').send({ titulo: 'Livro Temp', autor: 'Autor Temp' });
+        const res = await request(app).delete(`/livros/${criado.body.id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('mensagem');
+    });
+
+    test('DELETE /livros/:id retorna 404 para livro inexistente', async () => {
+        const res = await request(app).delete('/livros/9999');
+        expect(res.status).toBe(404);
+    });
 });

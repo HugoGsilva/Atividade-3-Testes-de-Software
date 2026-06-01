@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Gerenciamento de Livros (E2E)', () => {
+test.describe('Gerenciamento de Usuários (E2E)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
 
@@ -11,18 +11,21 @@ test.describe('Gerenciamento de Livros (E2E)', () => {
     await expect(page).toHaveURL(/\/dashboard|$/);
   });
 
-  test('deve navegar até a tela de livros e listar o acervo', async ({ page }) => {
-    await page.goto('/livros');
-    await expect(page.locator('h2')).toContainText('Acervo de Livros');
+  test('deve navegar até a tela de usuários e listar os cadastrados', async ({ page }) => {
+    await page.goto('/usuarios');
+    await expect(page.locator('h2')).toContainText('Gestão de Usuários');
   });
 
-  test('deve permitir adicionar um novo livro e encontrá-lo na lista', async ({ page }) => {
-    const tituloAleatorio = `Livro E2E ${Math.floor(Math.random() * 1000)}`;
+  test('deve permitir adicionar um novo usuário e encontrá-lo na lista', async ({ page }) => {
+    const nomeAleatorio = `Usuário E2E ${Math.floor(Math.random() * 10000)}`;
+    const emailAleatorio = `e2e-${Math.floor(Math.random() * 10000)}@test.com`;
 
-    await page.goto('/livros');
+    await page.goto('/usuarios');
     await page.locator('.fab').click();
-    await page.fill('input[name="titulo"]', tituloAleatorio);
-    await page.fill('input[name="autor"]', 'Automação Playwright');
+    await page.fill('input[name="nome"]', nomeAleatorio);
+    await page.fill('input[name="email"]', emailAleatorio);
+    await page.fill('input[name="senha"]', '123456');
+    await page.selectOption('select[name="tipo"]', 'aluno');
     await page.click('button[type="submit"]');
 
     await expect(page.locator('.modal')).not.toBeVisible();
@@ -31,7 +34,7 @@ test.describe('Gerenciamento de Livros (E2E)', () => {
     for (let i = 0; i < 20; i++) {
       await expect(page.locator('.list-cards')).toBeVisible({ timeout: 5000 });
 
-      if (await page.getByText(tituloAleatorio).isVisible()) {
+      if (await page.getByText(nomeAleatorio).isVisible()) {
         encontrado = true;
         break;
       }
@@ -49,7 +52,7 @@ test.describe('Gerenciamento de Livros (E2E)', () => {
   });
 
   test('deve fechar o modal ao clicar no botão cancelar', async ({ page }) => {
-    await page.goto('/livros');
+    await page.goto('/usuarios');
 
     await page.locator('.fab').click();
     await expect(page.locator('.modal')).toBeVisible();
@@ -57,8 +60,4 @@ test.describe('Gerenciamento de Livros (E2E)', () => {
     await page.click('button:has-text("Cancelar")');
     await expect(page.locator('.modal')).not.toBeVisible();
   });
-
-  // test de excluir registro
-
-  // test de editar registro
 });

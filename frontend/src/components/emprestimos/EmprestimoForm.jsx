@@ -9,7 +9,7 @@ export function EmprestimoForm({ livros, usuarios, onSubmit }) {
     e.target.reset();
   };
 
-  const livrosDisponiveis = livros.filter((l) => (l.disponivel ?? 0) > 0);
+  const livrosDisponiveis = livros.filter((l) => (l.disponivel ?? 1) > 0);
   const formId = 'emprestimo-novo';
 
   return (
@@ -22,7 +22,7 @@ export function EmprestimoForm({ livros, usuarios, onSubmit }) {
             <option value="">Selecione</option>
             {livrosDisponiveis.map((l) => (
               <option key={l.id} value={l.id}>
-                {l.titulo} · {l.disponivel} disp.
+                {l.titulo} · {l.disponivel !== undefined ? `${l.disponivel} disp.` : 'Disponível'}
               </option>
             ))}
           </select>

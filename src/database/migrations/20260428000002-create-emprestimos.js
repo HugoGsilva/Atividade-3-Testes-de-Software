@@ -37,6 +37,10 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },
+      data_devolucao_prevista: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
       status: {
         type: Sequelize.ENUM('ativo', 'devolvido', 'atrasado'),
         allowNull: false,

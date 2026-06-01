@@ -14,13 +14,26 @@ Projeto backend desenvolvido com **Node.js**, **Express** e **Sequelize** para a
 
 ## Estrutura de Testes
 
+### Testes Unitários e de Integração (Backend - Jest)
+
 | Arquivo de teste | Quantidade | Cenários cobertos |
 |------------------|------------|-------------------|
-| `livros.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), campos retornados |
-| `usuarios.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), email duplicado |
-| `emprestimos.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), campos retornados |
-| `multas.test.js` | 5 passes | POST (sucesso e campo ausente), GET/:id (existente e 404), valor como número |
-| **Total** | **20 testes** | |
+| `livros.test.js` | 11 passes | CRUD completo (GET, GET/:id, POST, PUT, DELETE), tratamento de 404 e retorno de campos |
+| `usuarios.test.js` | 10 passes | CRUD completo (GET, GET/:id, POST, PUT, DELETE), e-mail duplicado no cadastro e na edição, tratamento de 404 |
+| `emprestimos.test.js` | 10 passes | CRUD completo (GET, GET/:id, POST, PUT, DELETE), tratamento de data_devolucao_prevista e status, tratamento de 404 |
+| `multas.test.js` | 11 passes | CRUD completo + Quitar multa (GET, GET/:id, POST, PUT, PUT quitar, DELETE), tratamento de 404, valor numérico |
+| **Total** | **42 testes** | |
+
+### Testes de Interface / Fim-a-Fim (Frontend - Playwright E2E)
+
+| Arquivo de teste | Quantidade | Cenários de Teste Cobertos |
+|------------------|------------|-------------------|
+| `livros.spec.js` | 3 passes | Login, navegação e listagem, criação de livro com verificação na lista, fechar modal de cadastro |
+| `usuarios.spec.js` | 3 passes | Login, navegação e listagem, criação de usuário (aluno) com verificação na lista, fechar modal de cadastro |
+| `emprestimos.spec.js` | 3 passes | Login, navegação e listagem, criação de empréstimo (associando livro/aluno), fechar modal |
+| `multas.spec.js` | 3 passes | Login, navegação e listagem, aplicação de nova multa (associada ao empréstimo), fechar modal |
+| **Total** | **12 testes** | |
+
 
 ---
 
