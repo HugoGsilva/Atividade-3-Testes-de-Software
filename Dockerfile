@@ -4,6 +4,8 @@ FROM node:20-alpine
 # Diretório de trabalho
 WORKDIR /app
 
+RUN apk add --no-cache python3 make g++
+
 # Copia apenas os manifests primeiro (cache eficiente)
 COPY package*.json ./
 

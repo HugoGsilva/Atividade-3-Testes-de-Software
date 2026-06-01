@@ -11,6 +11,28 @@ afterAll(async () => {
 });
 
 describe('Livros', () => {
+    test('GET /livros lista todos os livros cadastrados', async () => {
+        await request(app).post('/livros').send({ titulo: 'Clean Code', autor: 'Martin Code' });
+        await request(app).post('/livros').send({ titulo: 'Refactoring', autor: 'Martin Fowler' });
+
+        const res = await request(app).get('/livros');
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual([
+            expect.objectContaining({ titulo: 'Clean Code', autor: 'Martin Code' }),
+            expect.objectContaining({ titulo: 'Refactoring', autor: 'Martin Fowler' }),
+        ]);
+    });
+
+    test('OPTIONS /livros permite requisicoes CORS do frontend', async () => {
+        const res = await request(app).options('/livros');
+
+        expect(res.status).toBe(204);
+        expect(res.headers['access-control-allow-origin']).toBe('*');
+        expect(res.headers['access-control-allow-methods']).toContain('GET');
+        expect(res.headers['access-control-allow-methods']).toContain('POST');
+    });
+
     test('POST /livros cria um livro', async () => {
         const res = await request(app).post('/livros').send({ titulo: 'Clean Code', autor: 'Martin Code'});
         expect(res.status).toBe(201);

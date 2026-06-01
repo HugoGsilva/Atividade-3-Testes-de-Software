@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "jest --runInBand --detectOpenHandles --testTimeout=30000",
+    "test": "jest tests --runInBand --detectOpenHandles --testTimeout=30000",
+    "docker:e2e": "docker compose up --force-recreate --abort-on-container-exit --exit-code-from e2e",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo"
   },

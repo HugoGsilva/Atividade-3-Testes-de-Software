@@ -1,5 +1,14 @@
 const { Livro } = require('../models');
 
+const listarLivros = async () => {
+  const livros = await Livro.findAll({ order: [['id', 'ASC']] });
+  return livros.map((livro) => ({
+    id: livro.id,
+    titulo: livro.titulo,
+    autor: livro.autor,
+  }));
+};
+
 const criarLivro = async (titulo, autor) => {
   const livro = await Livro.create({ titulo, autor });
   return {
@@ -19,4 +28,4 @@ const buscarPorId = async (id) => {
   };
 };
 
-module.exports = { criarLivro, buscarPorId };
+module.exports = { listarLivros, criarLivro, buscarPorId };

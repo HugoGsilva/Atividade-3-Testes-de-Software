@@ -1,25 +1,54 @@
 services:
-  app:
+  api:
     build: .
-    container_name: atividade03-testes
+    container_name: atividade03-api
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=test
       - PORT=3000
-    # Em máquinas lentas, aumenta o tempo de graceful shutdown
+    command: ["node", "scripts/docker-start-api.js"]
     stop_grace_period: 60s
     restart: unless-stopped
-    # Healthcheck redundante no compose (sobrescreve o do Dockerfile se necessário)
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/livros', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
-      interval: 60s
-      timeout: 30s
-      start_period: 120s
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
       retries: 5
-    # Evita consumir muita CPU/RAM em máquinas fracas
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: atividade03-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://api:3000
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5173', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 10
+
+  e2e:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.e2e
+    container_name: atividade03-playwright
+    environment:
+      - E2E_BASE_URL=http://frontend:5173
+      - CI=true
+    depends_on:
+      frontend:
+        condition: service_healthy
+    volumes:
+      - ./frontend/playwright-report:/app/playwright-report
+      - ./frontend/test-results:/app/test-results
+    command: ["npx", "playwright", "test"]

@@ -1,4 +1,6 @@
 node_modules
+frontend
+.tmp
 npm-debug.log
 .git
 .gitignore
