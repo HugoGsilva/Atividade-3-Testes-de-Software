@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+const apiURL = process.env.E2E_BASE_URL && process.env.E2E_BASE_URL.includes('frontend')
+  ? 'http://api:3000'
+  : 'http://localhost:3000';
+
 test.describe('Gerenciamento de Livros (E2E)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -11,44 +15,32 @@ test.describe('Gerenciamento de Livros (E2E)', () => {
     await expect(page).toHaveURL(/\/dashboard|$/);
   });
 
-  test('deve navegar até a tela de livros e listar o acervo', async ({ page }) => {
+  test('deve navegar ate a tela de livros e listar o acervo', async ({ page }) => {
     await page.goto('/livros');
     await expect(page.locator('h2')).toContainText('Acervo de Livros');
   });
 
-  test('deve permitir adicionar um novo livro e encontrá-lo na lista', async ({ page }) => {
-    const tituloAleatorio = `Livro E2E ${Math.floor(Math.random() * 1000)}`;
+  test('deve permitir adicionar um novo livro e encontra-lo na lista', async ({ page, request }) => {
+    const tituloAleatorio = `Livro E2E ${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     await page.goto('/livros');
     await page.locator('.fab').click();
     await page.fill('input[name="titulo"]', tituloAleatorio);
-    await page.fill('input[name="autor"]', 'Automação Playwright');
+    await page.fill('input[name="autor"]', 'Automacao Playwright');
     await page.click('button[type="submit"]');
 
     await expect(page.locator('.modal')).not.toBeVisible();
 
-    let encontrado = false;
-    for (let i = 0; i < 20; i++) {
-      await expect(page.locator('.list-cards')).toBeVisible({ timeout: 5000 });
+    const livros = await (await request.get(`${apiURL}/livros`)).json();
+    const criado = livros.find((livro) => livro.titulo === tituloAleatorio);
+    expect(criado).toBeTruthy();
 
-      if (await page.getByText(tituloAleatorio).isVisible()) {
-        encontrado = true;
-        break;
-      }
-
-      const btnProx = page.locator('.pagination button').nth(1);
-      if (await btnProx.isVisible() && !(await btnProx.isDisabled())) {
-        await btnProx.click({ force: true });
-        await page.waitForTimeout(500);
-      } else {
-        break;
-      }
-    }
-
-    expect(encontrado).toBeTruthy();
+    await page.fill('input[placeholder="Buscar por ID..."]', String(criado.id));
+    await page.locator('.search-bar button').click();
+    await expect(page.getByText(tituloAleatorio)).toBeVisible();
   });
 
-  test('deve fechar o modal ao clicar no botão cancelar', async ({ page }) => {
+  test('deve fechar o modal ao clicar no botao cancelar', async ({ page }) => {
     await page.goto('/livros');
 
     await page.locator('.fab').click();
@@ -57,8 +49,4 @@ test.describe('Gerenciamento de Livros (E2E)', () => {
     await page.click('button:has-text("Cancelar")');
     await expect(page.locator('.modal')).not.toBeVisible();
   });
-
-  // test de excluir registro
-
-  // test de editar registro
 });
